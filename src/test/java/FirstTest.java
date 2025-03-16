@@ -1,4 +1,5 @@
 
+import static java.lang.Thread.sleep;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.file.Path;
@@ -47,7 +48,8 @@ public class FirstTest {
         который имплементирует экземпляры класса (ChromeDriver, GeckoDriver и т.д.). Т.е. они обязаны все эти
         методы реализовать*/
 
-        //driver.manage().window().setPosition(new Point(2500, 50));
+        driver.manage().window().setPosition(new Point(2500, 50));// Здесь прописаны координаты, с указанием места
+        // где будет выгружаться наше окно, после запуска автотеста
     }
 
     @AfterEach
@@ -71,73 +73,123 @@ public class FirstTest {
     @Test
     public void testInfo() {
         driver.get("https://the-internet.herokuapp.com/windows");
-        String title = driver.getTitle();//Проверяет, что в тесте отображается title
-        String url = driver.getCurrentUrl();// Используется часто в тестах, чтобы убедиться, что страница открылась
-        String pageSource = driver.getPageSource();
-    }
+        String title = driver.getTitle();//Проверяет, что в тесте отображается нормальное название title
+        String url = driver.getCurrentUrl();// Используется часто в самих тестах, чтобы убедиться, что страница открылась.
+                                            // Подробнее ниже
+        String pageSource = driver.getPageSource();// Нужен, чтобы в алюр формировать отчёт. Ещё может быть нужен,
+        // когда мы хотим найти какой-то невидимый элемент и через селениум это сделать трудно или не возможно.
+        // Скрытые элементы невидимы, но нужны
+
+        /*url используется часто в самих тестах, чтобы убедиться, что страница открылась. Так как иногда не достаточно
+        открыть страницу, а нужно дождаться пока url будет тот который ожидаем. Потому что бывает очень много
+        разных редиректов, которые перенаправляют на другую страницу. Яркий пример это http://yandex.ru,
+        который перекидывает нас на https://dzen.ru. Ниже в тесте мы это и проверим. Скажем зайди на
+        http://yandex.ru/ и с помощью assertEquals проверим, что текущий url - https://dzen.ru*/
+}
 
     @Test
-    public void testRedirect() {
-        driver.get("http://yandex.ru/");
+    public void testRedirect() {// В данном тесте мы проверяем редирект, который перенаправляет на другую страницу
+        driver.get("https://yandex.ru/");
         assertEquals("https://dzen.ru/?yredirect=true", driver.getCurrentUrl());
     }
 
+    @Test
+    public void testNavigate() throws InterruptedException {
+        driver.get("https://the-internet.herokuapp.com/windows");
+        sleep(500);// Самый страшный грех в тестировании, это использ. sleep. Мы только в обучении применяем его. В дальнейшем рассмтрим другой способ
+        driver.navigate().refresh();
+        sleep(500);
+        driver.navigate().back();
+        sleep(500);
+        driver.navigate().forward();
+    /*В navigate можем использовать три метода, это refresh - обновление страницы браузера, back - назад,
+     forward - вперёд. Позволяют обновление Эти кнопки находятся в левом углу нашей страницы*/
 
+    }
+
+    @Test
+    public void testWindow() throws InterruptedException {
+        //driver.manage().window().maximize();// После запуска, manage().window() позволяет запускать окно браузера,
+        // на одном экране с автотестом. Ну а maximize() позволяет загрузить наше окно на полный размер экрана
+        driver.get("https://the-internet.herokuapp.com/windows");
+        Point point = driver.manage().window().getPosition();
+        //driver.manage().window().setSize(new Dimension(300, 300));// Указан размер нашего окна браузера, но
+        // можно maximize() поставить на весь экран
+
+        Dimension dimension = driver.manage().window().getSize();
+    }
+
+    @Test
+    public void testAlert() {
+        driver.get("https://the-internet.herokuapp.com/javascript_alerts");
+        Alert alert = driver.switchTo().alert();// С помощью switchTo()
+        assertEquals("I am a JS Alert", alert.getText());
+        alert.accept();
+    }
+    /* Alert это из java script. У неё нет дома в html. Это часть сайта, а не часть браузера*/
+
+    @Test
+    public void testCookie() {
+        driver.get("https://www.labirint.ru/");// Заходим на страницу
+        driver.manage().addCookie(new Cookie("cookie_policy", "1"));// Добавляем Cookie
+        Set<Cookie> cookieSet = driver.manage().getCookies();// При дебаже в cookieSet можно посмотреть большинство из cookies
+        driver.navigate().refresh();// Обновление страницы, после чего окно "Принять" пропадает
+    }
+
+    /* Комментарий к тесту testCookie.
+     Cookie это набор пары ключ:значение, т.е. текстовые данные, которые сервер отправляет нам (браузеру),
+    а браузер сохраняет их на компьютере. Мы об этом заговорили, т.к. много сайтов при загрузке просят
+     разрешить (принять) отправку Cookie. Если не принимать работу с Cookie в начале автотеста, то кейс упадёт.
+     Т.к. может при выборе нужного нам элемента (например книги на сайте), случайно нажмем на всплывающее
+     окно с Cookie. Преподаватель напомнил, что каждый раз, как мы запускаем новый драйвер, у нас инкогнито режим.
+     И у нас нет никаких куки, пока мы их не примем. Как с этим бороться???
+     1-й вариант. Написать в коде и каждый раз нажимать кнопку принять. НО это будет занимать в каждом тесте время
+     2-й вариант. ЭТО ПРОКИДЫВАТЬ КУКИ на прямую. ОН круче. Можно их посмотреть в девтулс во вкладке нетворк.
+     Вообще изначально, Cookie это заголовки. В ответе в нетворк приходит заголовок set-Cookie от сервера.
+     И мы должны их установить себе. Ещё это дело можно посмотреть в разделе Application в разделе Cookies
+     (ключ:cookie_policy, значение:1). И мы примем данные Cookie с помощью Selenium*/
+
+    @Test
+    public void takeScreen() {
+        driver.get("https://www.labirint.ru/");
+        TakesScreenshot takesScreenshot = (TakesScreenshot) driver;// Мы сказали преврати наш драйвер в TakesScreenshot
+        takesScreenshot.getScreenshotAs(OutputType.FILE).renameTo(Path.of("_output/result.png").toFile());
+    }
+
+    /*Комментарий к тесту takeScreen.
+    Одним из главных отчетов в UI тестах будет скриншот, который будем делать конкретно перед падением.
+    Но мы не будем заморачиваться и будем делать скрин в тесте, не зависимо, упал ли он, или отработал успешно.
+
+     У нас получается, что помимо того, что WebDriver имплементирует 7 разных драйверов
+     (FirefoxDriver, ChromeDriver .....), каждый из 7 этих драйверов наследуется от RemoteWebDriver.
+     Т.е. являются наследниками данного класса, у которого есть какие то общие поля и методы. Получается, что
+     м/у WebDriver и каждым из 7 этих драйверов стоит RemoteWebDriver
+
+                WebDriver
+
+     FirefoxDriver ChromeDriver ..........
+
+              RemoteWebDriver
+
+     К чему это велось? Откуда же брать скриншоты? Оказывается RemoteWebDriver имплементирует не только WebDriver,
+     но и WebDriver, JavascriptExecutor, HasCapabilities, HasDownloads, HasFederatedCredentialManagement,
+     HasVirtualAuthenticator, Interactive, PrintsPage, и необходимый для нас TakesScreenshot, который делает скрин.
+     А как же нам быть? Получается, если мы в самом начале данного класса изменим переменную private WebDriver driver
+     на private TakesScreenshot driver, то все наше автотесты в данном классе не будут работать.
+     Т.е. у нас получается гибкость, в плане использования разных браузеров, но в тоже время мы не можем использовать
+     TakesScreenshot. А для этого мы используем приведение типов, это просто изменение типов переменной.
+      То есть, для приведения к другому типу надо указать в скобках нужный тип. Поэтому в коде нашего теста
+     takeScreen напишем TakesScreenshot takesScreenshot = (TakesScreenshot) driver;
+     Мы сказали: преврати наш драйвер в TakesScreenshot.
+
+     Кроме того, мы в WebTesting создали отдельный дирректорий, куда будут сохраняться наши скрины и
+     прописали данный путь в тесте "_output/result.png".
+     Чтобы данные скрины не сохранять в репозитории гитхаб, мы заходим в слева в файл .gitignore и прописываем
+     наименование данного дирректория _output. Теперь не будет предложено idea сохранить данный файл
+     */
 
 }
 
 
 
-/*
-
-
-
-
-
-        @Test
-        public void testNavigate() throws InterruptedException {
-            driver.get("https://the-internet.herokuapp.com/windows");
-            sleep(500);
-            driver.navigate().refresh();
-            sleep(500);
-            driver.navigate().back();
-            sleep(500);
-            driver.navigate().forward();
-        }
-
-        @Test
-        public void testWindow() throws InterruptedException {
-            driver.manage().window().maximize();
-            driver.get("https://the-internet.herokuapp.com/windows");
-            Point point = driver.manage().window().getPosition();
-            //driver.manage().window().setSize(new Dimension(300, 300));
-
-            Dimension dimension = driver.manage().window().getSize();
-        }
-
-        @Test
-        public void testAlert() {
-            driver.get("https://the-internet.herokuapp.com/javascript_alerts");
-            Alert alert = driver.switchTo().alert();
-            assertEquals("I am a JS Alert", alert.getText());
-            alert.accept();
-        }
-
-        @Test
-        public void testCookie() {
-            driver.get("https://www.labirint.ru/");
-            driver.manage().addCookie(new Cookie("cookie_policy", "1"));
-            Set<Cookie> cookieSet = driver.manage().getCookies();
-            driver.navigate().refresh();
-        }
-
-        @Test
-        public void takeScreen() {
-            driver.get("https://www.labirint.ru/");
-            TakesScreenshot takesScreenshot = (TakesScreenshot) driver;
-            takesScreenshot.getScreenshotAs(OutputType.FILE).renameTo(Path.of("_output/result.png").toFile());
-        }
-    }
-
- */
 

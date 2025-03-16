@@ -1,6 +1,6 @@
 ************************ Life Hack ********************************************
 
-https://github.com/JetBrInno/JavaLessons4Module - ссылка на 4 модуль 
+https://github.com/JetBrInno/JavaLessons4Module/tree/master/src/test - ссылка на 4 модуль 
 
 Достаточно популярный тренажёр для изучения HTML, это code-basics
 (https://code-basics.com/ru/languages/html/lessons/html-markup). Кроме того, по данной ссылке 
@@ -18,3 +18,11 @@ selenium написал такой интерфейс WebDriver, такую од
 Для работы с фронтом скачаем в pom Selenium https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java/4.28.1
 
 На протяжении всего курса будем пользоваться в автотестах сайтом https://the-internet.herokuapp.com/windows
+
+Ctrl + B - позволяет провалиться внутрь класса к функции и даже посмотреть как она работает
+
+Кроме того, мы в WebTesting создали отдельный дирректорий, куда будут сохраняться наши скрины и
+прописали данный путь в тесте "_output/result.png".
+Чтобы данные скрины не сохранять в репозитории гитхаб, мы заходим в слева в файл .gitignore и прописываем
+наименование данного дирректория _output. Теперь не будет предложено idea сохранить данный файл
+
