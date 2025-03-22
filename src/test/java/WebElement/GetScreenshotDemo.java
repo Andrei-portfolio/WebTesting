@@ -35,7 +35,7 @@ public class GetScreenshotDemo {private WebDriver driver;
         }
     }
 
-    @Test//Странно, долно вверху появиться два скрина, но тест падает всто этого
+    @Test//Два скрина появляется слева, рядом с pom.xml, если хотим запустить повторно, то файлы нужно удалить, иначе тест падает
     @DisplayName("Скриншот конкретного элемента страницы")
     public void sendKeys() {
         driver.get("http://www.uitestingplayground.com/textinput");
