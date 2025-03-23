@@ -42,7 +42,7 @@ public class Labirint {
         }
     }
 
-    @Test
+    @Test//ТЕСТ ПОЧЕМУ-ТО У МЕНЯ НЕ ОТРАБАТЫВАЕТ.
     public void testList() {
         driver.get("https://www.labirint.ru/");
         driver.findElement(By.xpath("//input[@id='search-field']")).sendKeys("Java", Keys.RETURN);
