@@ -4,19 +4,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Set;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.Point;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
 
 public class Labirint {
     private WebDriver driver;
@@ -42,9 +39,14 @@ public class Labirint {
         }
     }
 
-    @Test//ТЕСТ ПОЧЕМУ-ТО У МЕНЯ НЕ ОТРАБАТЫВАЕТ.
+    @Test//ТЕСТ по началу НЕ ОТРАБАТЫВАЛ. Оказалось, что из-за КУКОВ. После того, как в данном тесте
+    // прописали, что после захода на сайт, нужно принять КУКИ (2я и 3я строка кода). То кейс успешно отработал.
+    // Добавили КУКИ, т.к. после захода на страницу, след. шагом нужно сначала принять КУКИ. Более
+    // подробно про куки расписано в классе FirstTest
     public void testList() {
         driver.get("https://www.labirint.ru/");
+        driver.manage().addCookie(new Cookie("cookie_policy", "1"));// Добавляем Cookie
+        driver.navigate().refresh();// Обновление страницы, после чего окно "Принять" пропадает
         driver.findElement(By.xpath("//input[@id='search-field']")).sendKeys("Java", Keys.RETURN);
         //Находим поисковую строку с помощью xpath, пишем там java и кликаем на RETURN (это enter на обычной клаве)
 
