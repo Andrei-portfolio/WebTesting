@@ -28,13 +28,14 @@ Page Object and Companents Model это почти тоже что и Page Objec
 элемент встречается на нескольких страницах или вообще на всех. Например, поисковая строка. То здесь всё просто,
 создаётся класс, BasePage, в переводе базовая страница.*/
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.Cookie;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
+import LessonsPageObject.component.BookCardComponent;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class MainPage extends BasePage {
+
+    public BookCardComponent bookCardComponent;
 
     public MainPage(WebDriver driver) {
         //driver = new ChromeDriver();
@@ -43,6 +44,7 @@ public class MainPage extends BasePage {
         //иначе таст падает, так как открывается два драйвера, один в данном классе из метода open, другой
         //из LabirintTest из метода setUp. Теперь, получается мы не ОБЪЯВЛЯЕМ драйвер, а ПРИНИМАЕМ его
         super(driver);//это обращение к родительскому конструктору
+        bookCardComponent = new BookCardComponent(driver, wait);
     }
 
     public void open() {//Т.к. класс изначально называется MainPage, то метод openMainPage изменили на open

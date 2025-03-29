@@ -3,6 +3,7 @@ package LessonsPageObject.page_object;
 /*Здесь представлен Page Object на страницу результатов поиска. Подробно про Page Object Model написано
 в классе MainPage*/
 
+import LessonsPageObject.component.BookCardComponent;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -13,20 +14,11 @@ import java.time.Duration;
 
 public class SearchResultPage extends BasePage {
 
-    private final By button = By.xpath("//a[contains(@class, 'btn-tocart')]");
+    public BookCardComponent bookCardComponent;
 
     public SearchResultPage(WebDriver driver) {
         super(driver);//это обращение к родительскому конструктору
-    }
-
-    public WebElement findButton() {
-        return driver.findElement(this.button);
-       /*Данный метод нужен только в том случае, если переменная private final By button приватная. Если её сделать
-       публичной public, то такого метода не нужно*/
-    }
-
-    public void waitButtonChanged() {
-        wait.until(ExpectedConditions.textToBe(this.button, "оформить"));
+        bookCardComponent = new BookCardComponent(driver, wait);
     }
 
     public String getHeaderText() {

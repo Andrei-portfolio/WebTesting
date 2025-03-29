@@ -66,12 +66,12 @@ public class LabirintTest {
         mainPage.findBook("Java");// вынесли в MaimPage, объявили данный класс mainPage.
         // строка с кодом была длинная, поэтому его вынесли в отдельный метод findBook()
 
-        WebElement buttonToCart = searchResultPage.findButton();//Находим нужную нам кнопку на странице
+        WebElement buttonToCart = searchResultPage.bookCardComponent.findButton();//Находим нужную нам кнопку на странице
         buttonToCart.click();//кликаем на кнопку и у нас товар добавляется в корзину и ч/з какое то время происх. замена
         // наименования кнопки "В корзину" на "Оформить".
         // Вот далее и НУЖНА ЗАДЕРЖКА
-        searchResultPage.waitButtonChanged();// wait - явное ожидание, пока наша кнопка не переименуется в оформить
-        // вынесли в отдельный метод waitButtonChanged в классе searchResultPage
+        searchResultPage.bookCardComponent.waitButtonChanged();// wait - явное ожидание, пока наша кнопка не
+        // переименуется в оформить вынесли в отдельный метод waitButtonChanged в классе searchResultPage
         buttonToCart.click();
         assertTrue(driver.findElement(cartPage.cartTitle).isDisplayed());// ПРОВЕРЯЕМ, ЧТО В КОРЗИНЕ ЕСТЬ НАШ ЭЛЕМЕНТ.
         //говорим, driver найди элемент cartTitle и проверь, что он есть в корзине
