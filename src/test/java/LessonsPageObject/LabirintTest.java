@@ -5,6 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
 
+import LessonsPageObject.page_object.CartPage;
+import LessonsPageObject.page_object.MainPage;
+import LessonsPageObject.page_object.SearchResultPage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,14 +19,19 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 
 public class LabirintTest {
+
     private WebDriver driver;
 
     private WebDriverWait wait;
 
-    private final By button = By.xpath("//a[contains(@class, 'btn-tocart')]");
-    private final By searchField = By.xpath("//input[@id='search-field']");
-    private final By cartTitle = By.xpath("//span[@class='cart-title']");
-    private final By cartCounter = By.xpath("//span[contains(@class, 'j-cart-count')]");
+    private MainPage mainPage;// Объявили данный класс, после того, как перенесли наши методы open() и findBook("Java")
+    // в класс MainPage
+
+    private SearchResultPage searchResultPage;// Аналогично, как и выше объявляли, создаем экземпляр класса для
+    // SearchResultPage, после того, как перенесли в него всё необходимое с данного класса
+
+    private CartPage cartPage;//Аналогично, как и выше объявляли, создаем экземпляр класса для
+    // CartPage, после того, как перенесли в него всё необходимое с данного класса
 
     @BeforeEach
     public void setUp() {
@@ -33,6 +41,12 @@ public class LabirintTest {
         driver.manage().window().setPosition(new Point(2500, 50));
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20)); // неявное ожидание
         wait = new WebDriverWait(driver, Duration.ofSeconds(20)); // явное ожидание
+        mainPage = new MainPage(driver);// прописали после того, как объявили данный класс выше и приняли драйвер
+        //в классе MainPage. Объявили свой драйвер
+        searchResultPage = new SearchResultPage(driver);//прописали аналогично, как и в строке выше, но только
+        // для класс SearchResultPage
+        cartPage = new CartPage(driver);//Как и в двух строках выше, прописали данный код, после того, как
+        // объявили данный класс выше и приняли драйвер в классе CartPag. Объявили свой драйвер
     }
 
     @AfterEach
@@ -48,31 +62,21 @@ public class LabirintTest {
     // в данный метод, т.к. это логично, что после захода на страницу, след. шагом сначала принять КУКИ. Более
     // подробно про куки расписано в классе FirstTest
     public void testList() {
-        openMainPage();// вынесли в отдельный метод openMainPage() ниже. Говорим открой главную страницу
-        findBook("Java");// строка с кодом была длинная, поэтому его вынесли в отдельный метод findBook() ниже
+        mainPage.open();// вынесли в MaimPage, объявили данный класс mainPage. Говорим открой главную страницу
+        mainPage.findBook("Java");// вынесли в MaimPage, объявили данный класс mainPage.
+        // строка с кодом была длинная, поэтому его вынесли в отдельный метод findBook()
 
-        WebElement buttonToCart = driver.findElement(button);//Находим нужную нам книгу
+        WebElement buttonToCart = searchResultPage.findButton();//Находим нужную нам кнопку на странице
         buttonToCart.click();//кликаем на кнопку и у нас товар добавляется в корзину и ч/з какое то время происх. замена
         // наименования кнопки "В корзину" на "Оформить".
         // Вот далее и НУЖНА ЗАДЕРЖКА
-        wait.until(ExpectedConditions.textToBe(button, "оформить"));// wait - явное ожидание, пока наша кнопка
-        //не переименуется в оформить
+        searchResultPage.waitButtonChanged();// wait - явное ожидание, пока наша кнопка не переименуется в оформить
+        // вынесли в отдельный метод waitButtonChanged в классе searchResultPage
         buttonToCart.click();
-        assertTrue(driver.findElement(cartTitle).isDisplayed());// ПРОВЕРЯЕМ, ЧТО В КОРЗИНЕ ЕСТЬ НАШ ЭЛЕМЕНТ.
+        assertTrue(driver.findElement(cartPage.cartTitle).isDisplayed());// ПРОВЕРЯЕМ, ЧТО В КОРЗИНЕ ЕСТЬ НАШ ЭЛЕМЕНТ.
         //говорим, driver найди элемент cartTitle и проверь, что он есть в корзине
-        assertEquals("1", driver.findElement(cartCounter).getText());// ПРОВЕРЯЕМ, ЧТО В КОРЗИНЕ
+        assertEquals("1", driver.findElement(cartPage.cartCounter).getText());// ПРОВЕРЯЕМ, ЧТО В КОРЗИНЕ
         // у нас один товар, который мы положили
-    }
-
-    private void openMainPage() {
-        driver.get("https://www.labirint.ru/");
-        driver.manage().addCookie(new Cookie("cookie_policy", "1"));// Добавляем Cookie
-        driver.navigate().refresh();// Обновление страницы, после чего окно "Принять" пропадает
-    }
-
-    private void findBook(String name) {
-        driver.findElement(searchField).sendKeys(name, Keys.RETURN);
-        //Находим поисковую строку с помощью xpath, пишем там java и кликаем на RETURN (это enter на обычной клаве)
     }
     /*
     Тест, заключается в следующем. Заходим на сайт https://www.labirint.ru/, в поисковую строку вводим поиск книг

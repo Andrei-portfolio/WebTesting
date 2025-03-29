@@ -1,5 +1,8 @@
 package LessonsPageObject;
 
+import LessonsPageObject.page_object.CartPage;
+import LessonsPageObject.page_object.MainPage;
+import LessonsPageObject.page_object.SearchResultPage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,9 +22,12 @@ public class SearchFieldTest {
 
     private WebDriverWait wait;
 
-    private By buttonXpath = By.xpath("//a[contains(@class, 'btn-tocart')]");
+    private MainPage mainPage;
 
-    private By searchFieldXpact = By.xpath("//input[@id='search-field']");
+    private SearchResultPage searchResultPage;//объявляли, создаем экземпляр класса для
+    // SearchResultPage, после того, как перенесли в него всё необходимое с данного класса
+
+    private CartPage cartPage;
 
     @BeforeEach
     public void setUp() {
@@ -31,6 +37,11 @@ public class SearchFieldTest {
         driver.manage().window().setPosition(new Point(2500, 50));
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20)); // неявное ожидание
         wait = new WebDriverWait(driver, Duration.ofSeconds(20)); // явное ожидание
+        mainPage = new MainPage(driver);// прописали после того, как объявили данный класс выше и приняли драйвер
+        //в классе MainPage. Объявили свой драйвер
+        searchResultPage = new SearchResultPage(driver);//прописали аналогично, как и в строке выше, но только
+        // для класса SearchResultPage
+        cartPage = new CartPage(driver);//прописали аналогично, как и в 2-х строках выше
     }
 
     @AfterEach
@@ -41,19 +52,34 @@ public class SearchFieldTest {
     }
 
     @Test//ТЕСТ ПОЧЕМУ-ТО У МЕНЯ НЕ ОТРАБАТЫВАЕТ.
-    public void testList() {
-        driver.get("https://www.labirint.ru/");
-        driver.findElement(searchFieldXpact).sendKeys("Java", Keys.RETURN);
+    public void testSearchField() {
+        mainPage.open();// заходим на главную страницу. Очень удобно, т.к обращаемся к одному из нашего page_object
+        mainPage.findBook("Java");
         //Находим поисковую строку с помощью xpath, пишем там java и кликаем на RETURN (это enter на обычной клаве)
 
-        String foundedHeader = driver.findElement(By.xpath("//h1")).getText();
+        String foundedHeader = searchResultPage.getHeaderText();
         assertEquals("Все, что мы нашли в Лабиринте по запросу «Java»",foundedHeader);
-        WebElement buttonToCart = driver.findElement(buttonXpath);//Находим нужную нам книгу
     }
-    /*в данном тесте проверяем, что после того, как на сайте в поисковую строку вбили текст и нажали Enter,
-    мы попадаем на другую страницу, где видим текст "Все, что мы нашли в Лабиринте по запросу «Java»"
 
-    ВАЖНО!!!!!!! КАК И ГОВОРИЛИ НА ПРОТЯЖЕНИИ ВСЕГО КУРСА ОТ ОДИНАКОВОГО КОДА НУЖНО ИЗБАВЛЯТЬСЯ. ЧТОБЫ ВЫНЕСТИ
+       /*в данном тесте проверяем, что после того, как на сайте в поисковую строку вбили текст и нажали Enter,
+    мы попадаем на другую страницу, где видим текст "Все, что мы нашли в Лабиринте по запросу «Java»*/
+
+    @Test
+    public void testSearchFieldInCart() {
+        cartPage.open();// заходим на страницу корзины. Очень удобно, т.к обращаемся к одному из нашего page_object
+        cartPage.findBook("Selenium");
+        //Находим поисковую строку с помощью xpath, пишем там java и кликаем на RETURN (это enter на обычной клаве)
+
+        String foundedHeader = searchResultPage.getHeaderText();
+        assertEquals("Все, что мы нашли в Лабиринте по запросу «Selenium»",foundedHeader);
+
+        /*В данном тесте, заходим в корзину и ищем в ней товар с "selenium", с помощью поисковой строки*/
+
+    }
+
+
+
+    /*ВАЖНО!!!!!!! КАК И ГОВОРИЛИ НА ПРОТЯЖЕНИИ ВСЕГО КУРСА ОТ ОДИНАКОВОГО КОДА НУЖНО ИЗБАВЛЯТЬСЯ. ЧТОБЫ ВЫНЕСТИ
     ПОВТОРЯЮЩИЙСЯ КОД В ПРЕДЕЛА ОДНОГО КЛАССА, НУЖНО ВЫДЕЛИТЬ ЭТОТ КОД, НАПРИМЕР НАШ локатор xpath или CSS селектор
     в тесте By.xpath("//input[@id='search-field']"). Далее  кликаем ПКМ, выбираем Refactor -- Introduce Field
     (Ctrl + Alt + F) -- пишем название нашей переменной -- вверху нашего класса пишем
@@ -67,7 +93,5 @@ public class SearchFieldTest {
 
     Ну а если мы хотим вынести одинаковый код, повторяющийся в пределах нескольких классов. То для этого существует
     ПАТЕРН PAGE OBJECT MODEL (сокращенно POM, не путать с pom.xml). Более подробно про паттерн  PAGE OBJECT MODEL
-    написано у меня в файле POJO.md
-    */
-
+    написано у меня в файле POJO.md*/
 }
