@@ -35,8 +35,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 
 public class MainPage extends BasePage {
 
-    public BookCardComponent bookCardComponent;
-
     public MainPage(WebDriver driver) {
         //driver = new ChromeDriver();
         //this.driver = driver;
@@ -44,7 +42,7 @@ public class MainPage extends BasePage {
         //иначе таст падает, так как открывается два драйвера, один в данном классе из метода open, другой
         //из LabirintTest из метода setUp. Теперь, получается мы не ОБЪЯВЛЯЕМ драйвер, а ПРИНИМАЕМ его
         super(driver);//это обращение к родительскому конструктору
-        bookCardComponent = new BookCardComponent(driver, wait);
+
     }
 
     public void open() {//Т.к. класс изначально называется MainPage, то метод openMainPage изменили на open

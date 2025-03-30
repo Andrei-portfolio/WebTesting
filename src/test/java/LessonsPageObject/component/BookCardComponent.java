@@ -17,24 +17,32 @@ import java.time.Duration;
 
 public class BookCardComponent {
 
-    protected final WebDriver driver;// обращу вниманее, сделали protected, чтобы можно было обратиться
+    private final WebElement element;
 
-    protected final WebDriverWait wait;
+    private final By button = By.cssSelector(".btn-tocart");
 
-    private final By button = By.xpath("//a[contains(@class, 'buy-link')]");
+    private final By title = By.cssSelector(".product-card__name");
 
-    public BookCardComponent(WebDriver driver, WebDriverWait wait) {
-        this.driver = driver;
-        this.wait = wait;
+    /*В пределах одного класса поиск элементов необходимо делать только одним локатором, например, только
+    cssSelector или x-patch*/
+
+    public BookCardComponent(WebElement element) {
+    this.element = element;
     }
 
     public WebElement findButton() {
-        return driver.findElement(this.button);
-       /*Данный метод нужен только в том случае, если переменная private final By button приватная. Если её сделать
-       публичной public, то такого метода не нужно*/
+        return element.findElement(this.button);//
+       /*ОЧЕНЬ ВАЖНО!!! Говорим ищи не на всей странице, а от какой-то области или родителя,
+       что снижает риск получить кучу всяких hidden элементов*/
     }
 
-    public void waitButtonChanged() {
+    public String getTitle() {
+        return element.findElement(this.title).getText();//
+       /*ОЧЕНЬ ВАЖНО!!! Говорим ищи не на всей странице, а от какой-то области или родителя,
+       что снижает риск получить кучу всяких hidden элементов*/
+    }
+
+    public void waitButtonChanged(WebDriverWait wait) {
         wait.until(ExpectedConditions.textToBe(this.button, "оформить"));
     }
 }

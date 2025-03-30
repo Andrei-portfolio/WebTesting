@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /*В данном классе представлен более объёмный код, без примененич Resolver из пакета ext. Если есть желание
 посмотреть более сокращённый код с применением Resolver, то он представлен в классе LabirintTest*/
 
-public class LabirintTestTwo {
+/*public class LabirintTestTwo {
 
     private WebDriver driver;
 
@@ -87,4 +87,4 @@ public class LabirintTestTwo {
     по java в названии. Далее наводим мышку на кнопку в корзину. И тут ловушка, кнопка через какое-то время
     переименовывается в "Оформить". Нам нужно поймать этот момент
     */
-}
+//}

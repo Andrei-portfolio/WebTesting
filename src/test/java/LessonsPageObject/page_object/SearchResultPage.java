@@ -11,14 +11,29 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SearchResultPage extends BasePage {
 
-    public BookCardComponent bookCardComponent;
+    private final By bookCardComponent = By.cssSelector(".product-card");
 
     public SearchResultPage(WebDriver driver) {
         super(driver);//это обращение к родительскому конструктору
-        bookCardComponent = new BookCardComponent(driver, wait);
+    }
+
+    public BookCardComponent getBookCardComponent () {
+        WebElement bookCardElement = driver.findElement(bookCardComponent);
+        return new BookCardComponent(bookCardElement);
+    }
+
+    public List<BookCardComponent> getBookCardComponents () {
+        List<BookCardComponent> bookCardComponents = new ArrayList<>();  //Создаём пустой список для наших элементов
+        List<WebElement> bookCardElements = driver.findElements(bookCardComponent);// Находим наши 60 элементов на странице
+
+        bookCardElements.forEach( bookCardElement -> bookCardComponents.add(new BookCardComponent(bookCardElement)));
+
+        return bookCardComponents;
     }
 
     public String getHeaderText() {
