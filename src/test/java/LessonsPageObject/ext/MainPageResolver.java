@@ -17,11 +17,10 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
-public class MainPageResolver implements ParameterResolver, BeforeEachCallback, AfterEachCallback {// Нужен для того, чтобы мы напрямую прокидывали
+import static LessonsPageObject.ext.ChromeDriverHelper.DRIVER;
+import static LessonsPageObject.ext.ChromeDriverHelper.getDriver;
 
-    static Namespace namespace = ExtensionContext.Namespace.create("my_store");
-
-    private WebDriver driver;
+public class MainPageResolver implements ParameterResolver {
 
     @Override
     public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
@@ -32,25 +31,10 @@ public class MainPageResolver implements ParameterResolver, BeforeEachCallback, 
     @Override
     public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext)
         throws ParameterResolutionException {
-        extensionContext.getStore(namespace).put("driver", driver);// В это хранилище
-        //ложим объект, например driver. Что за хранилище? Это типо map с параметрами ключ, значение
+        WebDriver driver = (WebDriver) extensionContext.getStore(ChromeDriverHelper.namespace)
+                .getOrComputeIfAbsent(DRIVER, k -> getDriver()); // получи значение из хранилища,
+                                                                        // либо создай его если его нет
 
         return new MainPage(driver);
     }
-
-    @Override
-    public void afterEach(ExtensionContext context) throws Exception {
-        if (driver != null) {
-            driver.quit();
-        }
-    }
-
-    @Override
-    public void beforeEach(ExtensionContext context) throws Exception {
-            ChromeOptions options = new ChromeOptions();
-            options.setPageLoadStrategy(PageLoadStrategy.EAGER);
-            driver = new ChromeDriver(options); // 1. Запускается драйвер 2. Драйвер запускает браузер
-            driver.manage().window().setPosition(new Point(2500, 50));
-            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20)); // неявное ожидание
-        }
-    }
+ }
