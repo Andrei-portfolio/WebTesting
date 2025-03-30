@@ -22,7 +22,7 @@ public class ChromeDriverHelper implements AfterEachCallback {// Нужен дл
     public void afterEach(ExtensionContext context) throws Exception {
         WebDriver driver = (WebDriver) context.getStore(ChromeDriverHelper.namespace)
                 .get(DRIVER); // получи значение из хранилища,
-        // либо создай его если его нет
+        // либо создай его если его  нет
 
         if (driver != null) {
             driver.quit();

@@ -33,7 +33,7 @@ public class BookCardComponent {
     public WebElement findButton() {
         return element.findElement(this.button);//
        /*ОЧЕНЬ ВАЖНО!!! Говорим ищи не на всей странице, а от какой-то области или родителя,
-       что снижает риск получить кучу всяких hidden элементов*/
+       что снижает риск получить кучу всяких hidden  элементов*/
     }
 
     public String getTitle() {

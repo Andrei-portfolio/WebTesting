@@ -19,7 +19,7 @@ public class SearchResultPage extends BasePage {
     private final By bookCardComponent = By.cssSelector(".product-card");
 
     public SearchResultPage(WebDriver driver) {
-        super(driver);//это обращение к родительскому конструктору
+        super(driver);//это обращение к родительскому  конструктору
     }
 
     public BookCardComponent getBookCardComponent () {
