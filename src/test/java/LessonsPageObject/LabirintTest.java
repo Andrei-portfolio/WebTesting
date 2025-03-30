@@ -3,8 +3,6 @@ package LessonsPageObject;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.time.Duration;
-
 import LessonsPageObject.ext.CartPageResolver;
 import LessonsPageObject.ext.ChromeDriverResolver;
 import LessonsPageObject.ext.MainPageResolver;
@@ -12,14 +10,11 @@ import LessonsPageObject.ext.SearchResultPageResolver;
 import LessonsPageObject.page_object.CartPage;
 import LessonsPageObject.page_object.MainPage;
 import LessonsPageObject.page_object.SearchResultPage;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+
 
 /*В данном классе представлено с сокращением кода, с применением Resolver из пакета ext. Если есть желание
 посмотреть более объёмный код без применения Resolver, то он представлен в классе LabirintTestTwo*/
