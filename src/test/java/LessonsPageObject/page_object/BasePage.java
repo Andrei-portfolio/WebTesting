@@ -26,9 +26,9 @@ public abstract class BasePage {
 
     private final By searchField = By.xpath("//input[@id='search-field']");
 
-    protected final WebDriver driver;// обращу вниманее, сделали protected, чтобы можно было обратиться
+    public final WebDriver driver;// обращу вниманее, сделали protected, чтобы можно было обратиться
 
-    protected final WebDriverWait wait;
+    public final WebDriverWait wait;
 
 
     public BasePage (WebDriver driver) {

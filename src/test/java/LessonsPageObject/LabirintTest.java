@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import LessonsPageObject.ext.CartPageResolver;
-import LessonsPageObject.ext.ChromeDriverResolver;
+import LessonsPageObject.ext.ChromeDriverHelper;
 import LessonsPageObject.ext.MainPageResolver;
 import LessonsPageObject.ext.SearchResultPageResolver;
 import LessonsPageObject.page_object.CartPage;
@@ -22,7 +22,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 @ExtendWith(MainPageResolver.class)
 @ExtendWith(CartPageResolver.class)
 @ExtendWith(SearchResultPageResolver.class)
-@ExtendWith(ChromeDriverResolver.class)
+@ExtendWith(ChromeDriverHelper.class)
 
 public class LabirintTest {
 
@@ -31,9 +31,11 @@ public class LabirintTest {
     // прописали, что после захода на сайт, нужно принять КУКИ. То кейс успешно отработал. Добавили про КУКИ именно
     // в данный метод, т.к. это логично, что после захода на страницу, след. шагом сначала принять КУКИ. Более
     // подробно про куки расписано в классе FirstTest
-    public void testList(MainPage mainPage, SearchResultPage searchResultPage, CartPage cartPage, ChromeDriver driver) {//Применили наши Resolver из пакета exp
-        mainPage.open();// вынесли в MaimPage, объявили данный класс mainPage. Говорим открой главную страницу
-        mainPage.findBook("Java");// вынесли в MaimPage, объявили данный класс mainPage.
+    public void testList(SearchResultPage searchResultPage, CartPage cartPage) {//Применили наши Resolver из пакета exp
+        cartPage.open();// вынесли в MaimPage, объявили данный класс mainPage. Говорим открой главную страницу
+        cartPage.driver.manage().addCookie(new Cookie("cookie_policy", "1"));// Добавляем Cookie
+        cartPage.driver.navigate().refresh();// Обновление страницы, после чего окно "Принять" пропадает
+        cartPage.findBook("Java");// вынесли в MaimPage, объявили данный класс mainPage.
         // строка с кодом была длинная, поэтому его вынесли в отдельный метод findBook()
 
         WebElement buttonToCart = searchResultPage.bookCardComponent.findButton();//Находим нужную нам кнопку на странице
@@ -43,9 +45,9 @@ public class LabirintTest {
         searchResultPage.bookCardComponent.waitButtonChanged();// wait - явное ожидание, пока наша кнопка не
         // переименуется в оформить вынесли в отдельный метод waitButtonChanged в классе searchResultPage
         buttonToCart.click();
-        assertTrue(driver.findElement(cartPage.cartTitle).isDisplayed());// ПРОВЕРЯЕМ, ЧТО В КОРЗИНЕ ЕСТЬ НАШ ЭЛЕМЕНТ.
+        assertTrue(cartPage.driver.findElement(cartPage.cartTitle).isDisplayed());// ПРОВЕРЯЕМ, ЧТО В КОРЗИНЕ ЕСТЬ НАШ ЭЛЕМЕНТ.
         //говорим, driver найди элемент cartTitle и проверь, что он есть в корзине
-        assertEquals("1", driver.findElement(cartPage.cartCounter).getText());// ПРОВЕРЯЕМ, ЧТО В КОРЗИНЕ
+        assertEquals("1", cartPage.driver.findElement(cartPage.cartCounter).getText());// ПРОВЕРЯЕМ, ЧТО В КОРЗИНЕ
         // у нас один товар, который мы положили
     }
     /*
