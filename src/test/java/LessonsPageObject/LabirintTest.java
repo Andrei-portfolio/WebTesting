@@ -5,63 +5,38 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
 
+import LessonsPageObject.ext.CartPageResolver;
+import LessonsPageObject.ext.ChromeDriverResolver;
+import LessonsPageObject.ext.MainPageResolver;
+import LessonsPageObject.ext.SearchResultPageResolver;
 import LessonsPageObject.page_object.CartPage;
 import LessonsPageObject.page_object.MainPage;
 import LessonsPageObject.page_object.SearchResultPage;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+/*В данном классе представлено с сокращением кода, с применением Resolver из пакета ext. Если есть желание
+посмотреть более объёмный код без применения Resolver, то он представлен в классе LabirintTestTwo*/
+
+@ExtendWith(MainPageResolver.class)
+@ExtendWith(CartPageResolver.class)
+@ExtendWith(SearchResultPageResolver.class)
+@ExtendWith(ChromeDriverResolver.class)
 
 public class LabirintTest {
-
-    private WebDriver driver;
-
-    private WebDriverWait wait;
-
-    private MainPage mainPage;// Объявили данный класс, после того, как перенесли наши методы open() и findBook("Java")
-    // в класс MainPage
-
-    private SearchResultPage searchResultPage;// Аналогично, как и выше объявляли, создаем экземпляр класса для
-    // SearchResultPage, после того, как перенесли в него всё необходимое с данного класса
-
-    private CartPage cartPage;//Аналогично, как и выше объявляли, создаем экземпляр класса для
-    // CartPage, после того, как перенесли в него всё необходимое с данного класса
-
-    @BeforeEach
-    public void setUp() {
-        ChromeOptions options = new ChromeOptions();
-        options.setPageLoadStrategy(org.openqa.selenium.PageLoadStrategy.EAGER);
-        driver = new ChromeDriver(options); // 1. Запускается драйвер 2. Драйвер запускает браузер
-        driver.manage().window().setPosition(new Point(2500, 50));
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20)); // неявное ожидание
-        wait = new WebDriverWait(driver, Duration.ofSeconds(20)); // явное ожидание
-        mainPage = new MainPage(driver);// прописали после того, как объявили данный класс выше и приняли драйвер
-        //в классе MainPage. Объявили свой драйвер
-        searchResultPage = new SearchResultPage(driver);//прописали аналогично, как и в строке выше, но только
-        // для класс SearchResultPage
-        cartPage = new CartPage(driver);//Как и в двух строках выше, прописали данный код, после того, как
-        // объявили данный класс выше и приняли драйвер в классе CartPag. Объявили свой драйвер
-    }
-
-    @AfterEach
-    public void tearDown() {
-        if (driver != null) {
-            driver.quit();
-        }
-    }
 
     @Test
     //ТЕСТ по началу НЕ ОТРАБАТЫВАЛ. Оказалось, что из-за КУКОВ. После того, как в данном классе в методе openMainPage
     // прописали, что после захода на сайт, нужно принять КУКИ. То кейс успешно отработал. Добавили про КУКИ именно
     // в данный метод, т.к. это логично, что после захода на страницу, след. шагом сначала принять КУКИ. Более
     // подробно про куки расписано в классе FirstTest
-    public void testList() {
+    public void testList(MainPage mainPage, SearchResultPage searchResultPage, CartPage cartPage, ChromeDriver driver) {//Применили наши Resolver из пакета exp
         mainPage.open();// вынесли в MaimPage, объявили данный класс mainPage. Говорим открой главную страницу
         mainPage.findBook("Java");// вынесли в MaimPage, объявили данный класс mainPage.
         // строка с кодом была длинная, поэтому его вынесли в отдельный метод findBook()
