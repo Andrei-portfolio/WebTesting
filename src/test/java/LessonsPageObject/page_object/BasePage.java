@@ -3,6 +3,9 @@ package LessonsPageObject.page_object;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
@@ -24,7 +27,19 @@ import java.time.Duration;
 
 public abstract class BasePage {
 
-    private final By searchField = By.xpath("//input[@id='search-field']");
+    //private final By searchField = By.xpath("//input[@id='search-field']");
+    /*Закомитили выше, так как здесь в данном классе приведём пример использования аннотации FindBy
+    Аннотация, благодаря которой можно раз и навсегда заменить метод findElement (поиск элементов) в автотестах.
+    Что делает данная аннотация? Ничего не делает, пока мы в кострукторе не пропишем
+    PageFactory.initElements(driver, this). Как результат, мы теперь не будем писать driver.findElement и заменим
+    его */
+
+    @FindBy(xpath ="//input[@id='search-field']")// Мы говорим ищи по ..... и выбираем нужный вариант, например по xpath
+    private WebElement searchField;// данный код нуже при создании аннотации @FindBy
+
+    //Преимущества аннотации @FindBy
+    // 1. Короче (не надо писать driver.findElement)
+    // 2. Не нужно переживать о том, что вы вызовете driver.findElement слишком рано
 
     public final WebDriver driver;// обращу вниманее, сделали protected, чтобы можно было обратиться
 
@@ -38,10 +53,11 @@ public abstract class BasePage {
         //иначе таст падает, так как открывается два драйвера, один в данном классе из метода open, другой
         //из LabirintTest из метода setUp. Теперь, получается мы не ОБЪЯВЛЯЕМ драйвер, а ПРИНИМАЕМ его
         wait = new WebDriverWait(driver, Duration.ofSeconds(20)); // явное ожидание
+        PageFactory.initElements(driver, this);// Данная строка кода вызывает все наши аннотации @FindBy
     }
 
     public void findBook(String name) {
-        driver.findElement(searchField).sendKeys(name, Keys.RETURN);
+        searchField.sendKeys(name, Keys.RETURN);
         //Находим поисковую строку с помощью xpath, пишем там java и кликаем на RETURN (это enter на обычной клаве)
     }
 }

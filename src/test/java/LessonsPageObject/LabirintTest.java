@@ -49,8 +49,9 @@ public class LabirintTest {
         bookCardComponent.waitButtonChanged(cartPage.wait);// wait - явное ожидание, пока наша кнопка не
         // переименуется в оформить вынесли в отдельный метод waitButtonChanged в классе searchResultPage
         buttonToCart.click();
-        assertTrue(cartPage.driver.findElement(cartPage.cartTitle).isDisplayed());// ПРОВЕРЯЕМ, ЧТО В КОРЗИНЕ ЕСТЬ НАШ ЭЛЕМЕНТ.
-        //говорим, driver найди элемент cartTitle и проверь, что он есть в корзине
+        assertTrue(cartPage.cartTitle.isDisplayed());// Сократили код за счёт аннотации @FindBy в классе CartPage.
+        // ПРОВЕРЯЕМ, ЧТО В КОРЗИНЕ ЕСТЬ НАШ ЭЛЕМЕНТ. Говорим, driver найди элемент cartTitle и проверь,
+        // что он есть в корзине
         assertEquals("1", cartPage.driver.findElement(cartPage.cartCounter).getText());// ПРОВЕРЯЕМ, ЧТО В КОРЗИНЕ
         // у нас один товар, который мы положили
     }
