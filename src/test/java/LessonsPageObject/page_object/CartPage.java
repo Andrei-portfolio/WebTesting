@@ -2,6 +2,7 @@ package LessonsPageObject.page_object;
 
 /*Подробно про Page Object Model написано в классе MainPage*/
 
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -32,6 +33,8 @@ public class CartPage extends BasePage{
         this.cartTitle = cartTitle; //Данная строка кода вызывает нашу аннотацию @FindBy
     }
 
+    @Step("Открыть страница корзина")// Данная аннотация, позволяеть  увидеть данный комментарий в allure отчёте, если этот
+    // метод используется в автотесте. И если автотест полетит, то будет видно, на каком шаге
     public void open() {
         driver.get("https://www.labirint.ru/cart/");
     }

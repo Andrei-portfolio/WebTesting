@@ -1,5 +1,6 @@
 package LessonsPageObject;
 
+import static io.qameta.allure.Allure.step;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -11,6 +12,9 @@ import LessonsPageObject.ext.SearchResultPageResolver;
 import LessonsPageObject.page_object.CartPage;
 import LessonsPageObject.page_object.MainPage;
 import LessonsPageObject.page_object.SearchResultPage;
+import io.qameta.allure.*;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.*;
@@ -27,9 +31,19 @@ import java.util.List;
 @ExtendWith(SearchResultPageResolver.class)
 @ExtendWith(ChromeDriverHelper.class)
 
+//Более подробно про аннотации для allure по ссылке https://allurereport.org/docs/junit5-reference/
+@Owner("John")// автор автотеста
+@Link(url = "https://ya.ru", name = "Яндекс")// если хотим прикрепить, например ссылку к задаче
+@Epic("Онлайн магазин книг")// В jira есть Epic, это большая задача, к которой прикрепляются более маленькие
+@Feature("Поисковая система")// аннотация фича
+
 public class LabirintTest {
 
     @Test
+    @DisplayName("Добавление товаров из поиска")//аннотация названия теста, в т.ч для Allure
+    @Description("Выводим в поиск слово, находим товар, добавляем в корзину")//аннотация описания теста, в т.ч для Allure
+    @Severity(SeverityLevel.BLOCKER)// аннотация важности
+    @Tag("Позитивный")// Тэгов может быть несколько
     //ТЕСТ по началу НЕ ОТРАБАТЫВАЛ. Оказалось, что из-за КУКОВ. После того, как в данном классе в методе openMainPage
     // прописали, что после захода на сайт, нужно принять КУКИ. То кейс успешно отработал. Добавили про КУКИ именно
     // в данный метод, т.к. это логично, что после захода на страницу, след. шагом сначала принять КУКИ. Более
@@ -43,12 +57,25 @@ public class LabirintTest {
 
         BookCardComponent bookCardComponent = searchResultPage.getBookCardComponent();
         WebElement buttonToCart = bookCardComponent.findButton();//Находим нужную нам кнопку на странице
-        buttonToCart.click();//кликаем на кнопку и у нас товар добавляется в корзину и ч/з какое то время происх. замена
-        // наименования кнопки "В корзину" на "Оформить".
+        step("Жмёи на кнопку Добавить в корзину", () -> {buttonToCart.click();});// Чтобы код строчкой ниже,
+        // отобразился в шагах в allure, нужен второй вариант использования Step, т.к. это уже не наш метод,
+        // а интерфеса. Мы не сможем там ничего написать. Поэтому мы пишем Step в самом тесте. Напомню, что () ->
+        // это лямбда функция
+        step("Жмёи на кнопку Оформить", () -> {bookCardComponent.waitButtonChanged(cartPage.wait);
+            cartPage.attachImage(buttonToCart);//Атачмент для картинки, который должен сфоткать кнопку в отчёте Allure
+            buttonToCart.click();// См. комментарий в коде выше, для чего мы поставили здесь step
+        });
+
+        //buttonToCart.click();//кликаем на кнопку и у нас товар добавляется в корзину и ч/з какое то время происх. замена
+        // наименования кнопки "В корзину" на "Оформить". ЗАКОМИТИЛ, т.к. для отчетов Allure перед данным кодом
+        // необходимо поставить step. Я это сделал в коде выше
+
         // Вот далее и НУЖНА ЗАДЕРЖКА
-        bookCardComponent.waitButtonChanged(cartPage.wait);// wait - явное ожидание, пока наша кнопка не
+        //bookCardComponent.waitButtonChanged(cartPage.wait);// wait - явное ожидание, пока наша кнопка не
         // переименуется в оформить вынесли в отдельный метод waitButtonChanged в классе searchResultPage
-        buttonToCart.click();
+
+        cartPage.attachData("Прикладываем такой вот текст select * from table");// Атачмент для текста
+
         assertTrue(cartPage.cartTitle.isDisplayed());// Сократили код за счёт аннотации @FindBy в классе CartPage.
         // ПРОВЕРЯЕМ, ЧТО В КОРЗИНЕ ЕСТЬ НАШ ЭЛЕМЕНТ. Говорим, driver найди элемент cartTitle и проверь,
         // что он есть в корзине
@@ -91,6 +118,6 @@ public class LabirintTest {
         System.out.println(bookCardComponent3.getTitle());
     }
 
-    /*В данном тесте нам необходимо обратиться сразу к нескольким товарам на  странице*/
+    /*В данном тесте нам необходимо обратиться сразу к нескольким товарам на странице*/
 
 }

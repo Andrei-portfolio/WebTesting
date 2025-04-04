@@ -1,9 +1,8 @@
 package LessonsPageObject.page_object;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import io.qameta.allure.Attachment;
+import io.qameta.allure.Step;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -56,8 +55,25 @@ public abstract class BasePage {
         PageFactory.initElements(driver, this);// Данная строка кода вызывает все наши аннотации @FindBy
     }
 
+    @Step("Найти книгу {name}")// Данная аннотация, позволяеть  увидеть данный комментарий в allure отчёте, если этот
+                               // метод используется в автотесте. И если автотест полетит, то будет видно, на каком шаге
     public void findBook(String name) {
         searchField.sendKeys(name, Keys.RETURN);
         //Находим поисковую строку с помощью xpath, пишем там java и кликаем на RETURN (это enter на обычной клаве)
+    }
+
+    @Attachment(value = "data", type = "text/plain", fileExtension = ".txt")//Атачмент для текста
+    public String attachData(String text) {
+        return text;
+    }
+
+    @Attachment(value = "data", type = "image/png", fileExtension = ".png")// Аттачмент для картинки
+    public byte[] attachImage(WebElement element) {
+        return element.getScreenshotAs(OutputType.BYTES);
+    }
+
+    @Attachment(value = "Несовпадение пикселей", type = "image/png", fileExtension = ".png")
+    public byte[] attachPng(byte[] image) {
+        return image;
     }
 }
