@@ -34,7 +34,7 @@ public abstract class BasePage {
     его */
 
     @FindBy(xpath ="//input[@id='search-field']")// Мы говорим ищи по ..... и выбираем нужный вариант, например по xpath
-    private WebElement searchField;// данный код нуже при создании аннотации @FindBy
+    public WebElement searchField;// данный код нуже при создании аннотации @FindBy
 
     //Преимущества аннотации @FindBy
     // 1. Короче (не надо писать driver.findElement)
