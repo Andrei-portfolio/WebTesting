@@ -109,3 +109,6 @@ CartPage. Над данным методом пишем аннотацию @Step
     </dependencies>
 </plugin>
 
+
+Ссылка на очень классное видео Дмитрия Ерёмина по установке самого scoop и allure, java через него
+https://ya.ru/video/preview/15181564664152049540
